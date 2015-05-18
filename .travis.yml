@@ -7,7 +7,7 @@ python:
   - 3.3
 
 install:
-  - pip install werkzeug multipart coverage coveralls anillo pytest
+  - pip install werkzeug multipart coverage coveralls anillo itsdangerous pytest
 
 script:
   - coverage run --source=anillo_auth -m py.test -v --tb=native

@@ -1,17 +1,17 @@
 from anillo.http.responses import Response
 from anillo.http.request import Request
 
-from anillo_auth.auth import auth_middleware
+from anillo_auth.auth import wrap_auth
 from unittest import mock
 
 
-def test_auth_middleware_with_invalid_parsed_data():
+def test_wrap_auth_with_invalid_parsed_data():
     func = mock.MagicMock()
     backend = mock.MagicMock()
     backend.parse = mock.MagicMock(return_value=None)
     backend.authenticate = mock.MagicMock()
 
-    auth_middleware(backend)(func)("test-request")
+    wrap_auth(backend=lambda: backend)(func)("test-request")
     assert backend.parse.called
     assert backend.parse.call_count == 1
     assert backend.parse.call_args == (("test-request",),)
@@ -20,13 +20,13 @@ def test_auth_middleware_with_invalid_parsed_data():
     assert func.call_count == 1
 
 
-def test_auth_middleware_with_response_on_parse():
+def test_wrap_auth_with_response_on_parse():
     func = mock.MagicMock()
     backend = mock.MagicMock()
     backend.parse = mock.MagicMock(return_value=Response("response-from-parse"))
     backend.authenticate = mock.MagicMock()
 
-    response = auth_middleware(backend)(func)("test-request")
+    response = wrap_auth(backend=lambda: backend)(func)("test-request")
     assert isinstance(response, Response)
     assert response.body == "response-from-parse"
     assert backend.parse.called
@@ -36,14 +36,14 @@ def test_auth_middleware_with_response_on_parse():
     assert not func.called
 
 
-def test_auth_middleware_with_data_on_parse():
+def test_wrap_auth_with_data_on_parse():
     func = mock.MagicMock()
     backend = mock.MagicMock()
     backend.parse = mock.MagicMock(return_value="test-data")
     backend.authenticate = mock.MagicMock(return_value="test-data")
 
     request = Request()
-    auth_middleware(backend)(func)(request)
+    wrap_auth(backend=lambda: backend)(func)(request)
     assert backend.parse.called
     assert backend.parse.call_count == 1
     assert backend.parse.call_args == ((request,),)
@@ -55,13 +55,13 @@ def test_auth_middleware_with_data_on_parse():
     assert func.call_count == 1
 
 
-def test_auth_middleware_with_data_on_parse_and_with_authenticate_return_response():
+def test_wrap_auth_with_data_on_parse_and_with_authenticate_return_response():
     func = mock.MagicMock()
     backend = mock.MagicMock()
     backend.parse = mock.MagicMock(return_value="test-data")
     backend.authenticate = mock.MagicMock(return_value=Response("test"))
 
-    response = auth_middleware(backend)(func)("test-request")
+    response = wrap_auth(backend=lambda: backend)(func)("test-request")
     assert isinstance(response, Response)
     assert response.body == "test"
     assert backend.parse.called

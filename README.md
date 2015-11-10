@@ -34,7 +34,7 @@ from anillo.middlewares.session import wrap_session, MemoryStorage
 from anillo.http import Ok
 from anillo.utils.common import chain
 
-from anillo_auth.auth import auth_middleware
+from anillo_auth.auth import wrap_auth
 from anillo_auth.backends.session import SessionBackend
 
 import json
@@ -57,7 +57,7 @@ urls = [
 app = application(chain(
     wrap_cookies,
     wrap_session(storage=MemoryStorage),
-    auth_middleware(SessionBackend()),
+    wrap_auth(backend=SessionBackend),
     router(urls)
 ))
 

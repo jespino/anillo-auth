@@ -13,7 +13,7 @@ setup(
     author_email='jespinog@gmail.com',
     url='https://github.com/jespino/anillo_auth',
     license='BSD',
-    packages=['anillo_auth'],
+    packages=['anillo_auth', 'anillo_auth.backends'],
     install_requires=[
         'itsdangerous',
     ],

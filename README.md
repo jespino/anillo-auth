@@ -29,8 +29,8 @@ The currently working backends are:
 ```python
 from anillo.app import application
 from anillo.handlers.routing import router, url
-from anillo.middlewares.cookies import cookies_middleware
-from anillo.middlewares.session import session_middleware, MemoryStorage
+from anillo.middlewares.cookies import wrap_cookies
+from anillo.middlewares.session import wrap_session, MemoryStorage
 from anillo.http import Ok
 from anillo.utils import chain
 
@@ -55,8 +55,8 @@ urls = [
 ]
 
 app = application(chain(
-    cookies_middleware,
-    session_middleware(MemoryStorage()),
+    wrap_cookies,
+    wrap_session(MemoryStorage()),
     auth_middleware(SessionBackend()),
     router(urls)
 ))

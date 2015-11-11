@@ -22,7 +22,7 @@ def wrap_auth(func=None, *, backend=HttpBasicAuthBackend):
     if func is None:
         return functools.partial(wrap_auth, backend=backend)
 
-    # Initialize the storage
+    # Initialize the backend
     backend = backend()
 
     def wrapper(request):
